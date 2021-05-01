@@ -1,41 +1,54 @@
-var express = require('express')
-var router = express.Router();
-
-var cart = []
+const express = require('express')
+const router = express.Router();
+const Cart = require('../models/cart-model.js');
 
 router.route('/')
-    .get((req, res) => {
+    .get(async (req, res) => {
+        try {
+            await Cart.find({})
+                .then(resp => res.status(202).json({ success: true, cart: resp }))
+                .catch(err => res.status(404).json({ success: false, message: "failed to fetch cart items." }))
+        } catch (err) {
+            res.status(404).json({ success: true, message: "failed to fetch cart items." })
+        }
         res.status(201).json({ success: true, cart })
     })
-    .post((req, res) => {
+    .post(async (req, res) => {
         const { _id, qty } = req.body;
-        const findItem = cart.find(item => item._id === _id);
-        if (_id) {
-            if (findItem) {
-                return res.status(400).json({ success: false, message: "item already exists" })
-            }
-            cart.push({ _id, qty })
-            return res.status(201).json({ success: true, item: { _id, qty } });
+
+        try {
+            const NewItem = new Cart({ _id, qty })
+            await NewItem.save()
+                .then(resp => res.status(201).json({ success: true, message: `successfully uploaded data${resp}` }))
+                .catch(err => res.status(404).json({ success: false, message: "failed to upload data" }))
+        } catch (err) {
+            res.status(404).json({ success: false, message: "failed to upload data" })
         }
-        return res.status(400).json({ success: false, message: "undefined id" });
     })
-    .patch((req, res) => {
+    .patch(async (req, res) => {
         const { _id, qty } = req.body;
-        const findItem = cart.find(item => item._id === _id)
-        if (findItem) {
-            cart.map(item => item._id == _id ? item.qty = qty : null);
-            return res.status(201).json({ success: true, item: { _id, qty } });
+
+        try {
+            const Item = await Cart.findOne({ _id });
+            Item.overwrite({ qty });
+            await Item.save()
+                .then(resp => res.status(201).json({ success: true, message: `successfully updated data ${resp}` }))
+                .catch(err => res.status(404).json({ success: false, message: "failed to update data" }))
+        } catch (err) {
+            res.status(404).json({ success: false, message: "failed to upload data" })
         }
-        res.status(404).json({ success: false, message: "item not found" })
     })
-    .delete((req, res) => {
+    .delete(async (req, res) => {
         const { _id } = req.body;
-        const findItem = cart.find(item => item._id === _id)
-        if (findItem) {
-            cart = cart.filter(item => item._id !== _id);
-            return res.status(201).json({ success: true, item: { _id } });
+
+        try {
+            await Cart.deleteOne({ _id })
+                .then(resp => res.status(201).json({ success: true, message: `successfully deleted data ${resp}` }))
+                .catch(err => res.status(404).json({ success: false, message: "failed to delete item." }))
+
+        } catch (err) {
+            res.status(404).json({ success: false, message: "failed to remove cart item." })
         }
-        res.status(404).json({ success: false, message: "item not found" })
     })
 
 module.exports = router;

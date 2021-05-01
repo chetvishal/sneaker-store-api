@@ -11,7 +11,6 @@ mongoose.connect(
     .catch(err => console.log("Error connecting to mongoDB: ", err))
 
 const ProductSchema = new mongoose.Schema({
-    // id: { type: String, unique: true },
     name: { type: String, required: true },
     image: { type: String, required: true },
     price: { type: String, required: true },

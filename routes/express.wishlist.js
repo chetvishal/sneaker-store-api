@@ -1,29 +1,51 @@
 var express = require('express')
 var router = express.Router();
+const Wishlist = require('../models/wishlist-model.js');
 
 var wishlist = []
 
 router.route('/')
-    .get((req, res) => {
-        res.status(201).json({ success: true, wishlist })
-    })
-    .post((req, res) => {
-        const { _id } = req.body;
-        const findItem = wishlist.find(item => item._id === _id);
-        if (findItem) {
-            return res.status(400).json({ success: false, message: "item already exists" })
+    .get(async (req, res) => {
+        try {
+            await Wishlist.find({})
+                .then(resp => res.status(201).json({success: true, wishlist: resp}))
+                .catch(err => res.status(201).json({ success: false, message: "failed to fetch resources" }))
+        } catch (err) {
+            console.log("err: ", err)
+            res.status(404).json({ success: false, message: "failed to fetch wishlist" })
         }
-        wishlist.push({ _id })
-        res.status(201).json({ success: true, item: { _id } });
     })
-    .delete((req, res) => {
-        const { _id } = req.body;
-        const findItem = wishlist.find(item => item._id === _id)
-        if (findItem) {
-            wishlist = wishlist.filter(item => item._id !== _id);
-            return res.status(201).json({ success: true, item: { _id } });
+    .post(async (req, res) => {
+        try {
+            const { _id } = req.body;
+            
+            const NewItem = new Wishlist({ _id })
+            await NewItem.save()
+                .then(data => {
+                    console.log("data after adding to wishlist: ", data)
+                    res.status(201).json({ success: true, item: { _id } })
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(404).json({ success: false, message: "failed to upload wishlist item" })
+                })
+        } catch (err) {
+            console.log("err: ", err);
+            res.status(404).json({ success: false, message: "failed to upload wishlist item" })
         }
-        res.status(404).json({ success: false, message: "item not found" })
+    })
+    .delete(async (req, res) => {
+        try {
+            const { _id } = req.body;
+
+            await Wishlist.deleteOne({ _id })
+                .then(() => res.status(202).json({ success: true, message: `item: ${_id} successfully deleted.` }))
+                .catch(err => res.status(404).json({ success: false, message: "failed in deleting item" }))
+
+        } catch (err) {
+            console.log(err);
+            res.status(404).json({ success: false, message: "failed to remove item from wishlist" })
+        }
     })
 
 module.exports = router;
