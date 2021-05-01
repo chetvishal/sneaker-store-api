@@ -11,7 +11,6 @@ router.route('/')
         } catch (err) {
             res.status(404).json({ success: true, message: "failed to fetch cart items." })
         }
-        res.status(201).json({ success: true, cart })
     })
     .post(async (req, res) => {
         const { _id, qty } = req.body;
