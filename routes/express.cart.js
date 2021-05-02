@@ -18,7 +18,7 @@ router.route('/')
         try {
             const NewItem = new Cart({ _id, qty })
             await NewItem.save()
-                .then(resp => res.status(201).json({ success: true, message: `successfully uploaded data${resp}` }))
+                .then(resp => res.status(201).json({ success: true, item: {_id, qty} }))
                 .catch(err => res.status(404).json({ success: false, message: "failed to upload data" }))
         } catch (err) {
             res.status(404).json({ success: false, message: "failed to upload data" })
@@ -31,7 +31,7 @@ router.route('/')
             const Item = await Cart.findOne({ _id });
             Item.overwrite({ qty });
             await Item.save()
-                .then(resp => res.status(201).json({ success: true, message: `successfully updated data ${resp}` }))
+                .then(resp => res.status(201).json({ success: true, item: {_id, qty} }))
                 .catch(err => res.status(404).json({ success: false, message: "failed to update data" }))
         } catch (err) {
             res.status(404).json({ success: false, message: "failed to upload data" })
@@ -42,7 +42,7 @@ router.route('/')
 
         try {
             await Cart.deleteOne({ _id })
-                .then(resp => res.status(201).json({ success: true, message: `successfully deleted data ${resp}` }))
+                .then(resp => res.status(201).json({ success: true, item: {_id} }))
                 .catch(err => res.status(404).json({ success: false, message: "failed to delete item." }))
 
         } catch (err) {
