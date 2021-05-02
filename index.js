@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const PORT = process.env.PORT || 8000;
+const {dbConnect} = require('./db/db');
 const products = require('./routes/express.products.js');
 const cart = require('./routes/express.cart.js');
 const wishlist = require('./routes/express.wishlist.js');
@@ -9,6 +10,7 @@ const wishlist = require('./routes/express.wishlist.js');
 
 app.use(express.json());
 app.use(cors());
+dbConnect();
 
 app.get('/', (req, res) => {
     res.json({ success: true, message: "KICKS API" });
