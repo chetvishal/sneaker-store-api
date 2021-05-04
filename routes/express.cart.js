@@ -5,9 +5,8 @@ const Cart = require('../models/cart-model.js');
 router.route('/')
     .get(async (req, res) => {
         try {
-            await Cart.find({})
-                .then(resp => res.status(202).json({ success: true, cart: resp }))
-                .catch(err => res.status(404).json({ success: false, message: "failed to fetch cart items." }))
+            const result = await Cart.find().populate("_id");
+            res.status(201).json({ success: true, cart: result })
         } catch (err) {
             res.status(404).json({ success: true, message: "failed to fetch cart items." })
         }
@@ -17,8 +16,13 @@ router.route('/')
 
         try {
             const NewItem = new Cart({ _id, qty })
+
             await NewItem.save()
-                .then(resp => res.status(201).json({ success: true, item: {_id, qty} }))
+            await Cart.findOne({ _id }).populate("_id")
+                .then(resp => {
+                    console.log("populatedIdData: ", resp)
+                    res.status(201).json({ success: true, item: resp })
+                })
                 .catch(err => res.status(404).json({ success: false, message: "failed to upload data" }))
         } catch (err) {
             res.status(404).json({ success: false, message: "failed to upload data" })
@@ -31,7 +35,7 @@ router.route('/')
             const Item = await Cart.findOne({ _id });
             Item.overwrite({ qty });
             await Item.save()
-                .then(resp => res.status(201).json({ success: true, item: {_id, qty} }))
+                .then(resp => res.status(201).json({ success: true, item: { _id, qty } }))
                 .catch(err => res.status(404).json({ success: false, message: "failed to update data" }))
         } catch (err) {
             res.status(404).json({ success: false, message: "failed to upload data" })
@@ -42,7 +46,7 @@ router.route('/')
 
         try {
             await Cart.deleteOne({ _id })
-                .then(resp => res.status(201).json({ success: true, item: {_id} }))
+                .then(resp => res.status(201).json({ success: true, item: { _id } }))
                 .catch(err => res.status(404).json({ success: false, message: "failed to delete item." }))
 
         } catch (err) {

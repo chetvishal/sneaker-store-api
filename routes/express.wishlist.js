@@ -5,9 +5,8 @@ const Wishlist = require('../models/wishlist-model.js');
 router.route('/')
     .get(async (req, res) => {
         try {
-            await Wishlist.find({})
-                .then(resp => res.status(201).json({ success: true, wishlist: resp }))
-                .catch(err => res.status(201).json({ success: false, message: "failed to fetch resources" }))
+            const result = await Wishlist.find().populate("_id")
+            res.status(201).json({ success: true, wishlist: result })
         } catch (err) {
             console.log("err: ", err)
             res.status(404).json({ success: false, message: "failed to fetch wishlist" })
@@ -19,13 +18,13 @@ router.route('/')
 
             const NewItem = new Wishlist({ _id })
             await NewItem.save()
-                .then(data => {
-                    res.status(201).json({ success: true, item: { _id } })
+            await Wishlist.findOne({ _id }).populate("_id")
+                .then(resp => {
+                    console.log("populatedIdData: ", resp)
+                    res.status(201).json({ success: true, item: resp })
                 })
-                .catch(err => {
-                    console.log(err)
-                    res.status(404).json({ success: false, message: "failed to upload wishlist item" })
-                })
+                .catch(err => res.status(404).json({ success: false, message: "failed to upload data" }))
+
         } catch (err) {
             console.log("err: ", err);
             res.status(404).json({ success: false, message: "failed to upload wishlist item" })
