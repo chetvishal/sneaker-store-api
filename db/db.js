@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 async function dbConnect() {
 
     await mongoose.connect(
-        'mongodb+srv://admin:babubhai123@neog-cluster.yuntr.mongodb.net/ecommerce',
+        process.env.MONGO_URI,
         {
             useNewUrlParser: true,
             useUnifiedTopology: true
