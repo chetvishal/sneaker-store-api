@@ -3,11 +3,12 @@ const app = express();
 require('dotenv').config()
 const cors = require('cors');
 const PORT = process.env.PORT || 8000;
-const {dbConnect} = require('./db/db');
+const { dbConnect } = require('./db/db');
 const products = require('./routes/express.products.js');
 const cart = require('./routes/express.cart.js');
 const wishlist = require('./routes/express.wishlist.js');
-
+const login = require('./routes/express.login.js');
+const signup = require('./routes/express.signup.js')
 
 app.use(express.json());
 app.use(cors());
@@ -18,11 +19,19 @@ app.get('/', (req, res) => {
 });
 
 app.use('/products', products);
+
 app.use('/cart', cart);
+
 app.use('/wishlist', wishlist);
+
+app.use('/login', login);
+
+app.use('/signup', signup);
+
 app.use((req, res) => {
     res.status(404).json({ success: false, message: "No such route defined" })
 })
+
 app.use(((err, req, res, next) => {
     res.status(500).json({ success: false, message: err })
 }))
