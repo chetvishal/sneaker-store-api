@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 async function dbConnect() {
 
     await mongoose.connect(
-        `${process.env.MONGO_URI}`,
+        `mongodb+srv://admin:${process.env.MONGO_PASSWORD}@neog-cluster.yuntr.mongodb.net/ecommerce`,
         {
             useNewUrlParser: true,
             useUnifiedTopology: true
