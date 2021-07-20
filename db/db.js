@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const mongoPassword = process.env['MONGO_PASSWORD']
 
 async function dbConnect() {
 
     await mongoose.connect(
-        `mongodb+srv://admin:${process.env.MONGO_PASSWORD}@neog-cluster.yuntr.mongodb.net/ecommerce`,
+        `mongodb+srv://admin:${mongoPassword}@neog-cluster.yuntr.mongodb.net/ecommerce`,
         {
             useNewUrlParser: true,
             useUnifiedTopology: true
