@@ -8,7 +8,8 @@ const products = require('./routes/express.products.js');
 const cart = require('./routes/express.cart.js');
 const wishlist = require('./routes/express.wishlist.js');
 const login = require('./routes/express.login.js');
-const signup = require('./routes/express.signup.js')
+const signup = require('./routes/express.signup.js');
+const payments = require('./routes/express.payments.js');
 
 app.use(express.json());
 app.use(cors());
@@ -27,6 +28,8 @@ app.use('/wishlist', wishlist);
 app.use('/login', login);
 
 app.use('/signup', signup);
+
+app.use('/payments', payments)
 
 app.use((req, res) => {
     res.status(404).json({ success: false, message: "No such route defined" })

@@ -76,4 +76,20 @@ router.route('/')
         }
     })
 
+
+router.route('/clear')
+    .post(async (req, res) => {
+        try {
+            const { userId } = req.body;
+            await Cart.findOneAndDelete({ userId: userId });
+
+            res.status(200).json({ success: true, message: "cart cleared successfully." })
+        } catch (err) {
+            console.log("error clearing cart: ", err)
+            res.status(500).json({ success: false, message: "failed to clear cart" })
+        }
+    })
+
+
+
 module.exports = router;
