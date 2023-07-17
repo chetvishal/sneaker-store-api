@@ -39,8 +39,8 @@ app.use(((err, req, res, next) => {
     res.status(500).json({ success: false, message: err })
 }))
 
-// app.listen(PORT, () => {
-//     console.log('SERVER STARTED');
-// });
+app.listen(PORT, () => {
+    console.log('SERVER STARTED');
+});
 
-module.exports = app;
+// module.exports = app;
